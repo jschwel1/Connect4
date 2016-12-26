@@ -41,7 +41,7 @@ void drawBoard(char board[6][7]){
 void playGame(player player1, player player2){
 	char token;
 	char empty = ' ';
-/*	char board [6][7]= {
+	char board [6][7]= {
 						{empty, empty, empty, empty, empty, empty, empty},
 						{empty, empty, empty, empty, empty, empty, empty},
 						{empty, empty, empty, empty, empty, empty, empty},
@@ -49,17 +49,17 @@ void playGame(player player1, player player2){
 						{empty, empty, empty, empty, empty, empty, empty},
 						{empty, empty, empty, empty, empty, empty, empty},				
 					};
-*/					
+/*					
 	char board [6][7]= {
-						{'-', 'x', '+', '-', '+', '-', '-',},
-						{'a', '-', '+', '-', '+', '-', '-',},
+						{'-', 'x', '+', '-', empty, empty, empty,},
+						{'a', '-', '+', '-', empty, empty, empty,},
 						{'-', 'x', '+', empty, empty, empty, empty},
 						{'a', '-', '/', empty, empty, empty, empty},
 						{'-', 'x', '+', empty, empty, empty, empty},
 						{'a', '-', '+', empty, empty, empty, empty},				
 					};
 
-/*	char board [6][7]= {
+	char board [6][7]= {
 						{'X', 'O', 'X', 'O', 'X', empty, empty},
 						{'O', 'X', 'O', 'X', 'O', empty, empty},
 						{'X', 'X', 'X', 'O', empty, empty, empty},
@@ -115,6 +115,15 @@ bool isAvailable(char board[6][7], int loc){
 
 }
 
+int colsAvailable(char board[6][7]){
+	int num = 0;
+	for (int c = 0; c < 7; c++){
+		if (isAvailable(board, c)) num++;
+	}
+	
+	return num;
+}
+
 
 bool isTie(char board[6][7]){
 	for (int c = 0; c < 7; c++){
@@ -124,12 +133,20 @@ bool isTie(char board[6][7]){
 }
 
 char winner(char board[6][7]){
+	char win;
 	// check horizontal
 	for (int r = 0; r < 6; r++){
 		for (int c = 0; c < 4; c++){
 			if (board[r][c] != ' ' && board[r][c] == board[r][c+1] && board[r][c] == board[r][c+2] && board[r][c] == board[r][c+3]){
 //				printf("============Horizontal win @ r=%d\n",r);
-				return board[r][c];
+				win = board[r][c];
+				#ifdef SHOW_WIN
+					board[r][c] = '-';
+					board[r][c+1] = '-';
+					board[r][c+2] = '-';
+					board[r][c+3] = '-';
+				#endif
+				return win;
 			}
 		}
 	}
@@ -139,7 +156,14 @@ char winner(char board[6][7]){
 		for (int r = 0; r < 3; r++){
 			if (board[r][c] != ' ' && board[r][c] == board[r+1][c] && board[r][c] == board[r+2][c] && board[r][c] == board[r+3][c]){
 //				printf("============vertical win @ c = %d\n", c);
-				return board[r][c];
+				win = board[r][c];
+				#ifdef SHOW_WIN
+					board[r][c] = '|';
+					board[r+1][c] = '|';
+					board[r+2][c] = '|';
+					board[r+3][c] = '|';
+				#endif
+				return win;
 			}
 		}
 	}
@@ -149,7 +173,14 @@ char winner(char board[6][7]){
 		for (int c = 3; c < 7; c++){
 			if (board[r][c] != ' ' && board[r][c] == board[r+1][c-1] && board[r][c] == board[r+2][c-2] && board[r][c] == board[r+3][c-3]){
 //				printf("============Diagonal win \\\n");
-				return board[r][c];
+				win = board[r][c];
+				#ifdef SHOW_WIN
+					board[r][c] = '\\';
+					board[r+1][c-1] = '\\';
+					board[r+2][c-2] = '\\';
+					board[r+3][c-3] = '\\';
+				#endif
+				return win;
 			}
 		}
 	}
@@ -159,7 +190,14 @@ char winner(char board[6][7]){
 		for (int c = 0; c < 4; c++){
 			if (board[r][c] != ' ' && board[r][c] == board[r+1][c+1] && board[r][c] == board[r+2][c+2] && board[r][c] == board[r+3][c+3]){
 //				printf("============Diagonal win /\n");
-				return board[r][c];
+				win = board[r][c];
+				#ifdef SHOW_WIN
+					board[r][c] = '/';
+					board[r+1][c+1] = '/';
+					board[r+2][c+2] = '/';
+					board[r+3][c+3] = '/';
+				#endif
+				return win;
 			}
 		}
 	}
@@ -229,4 +267,15 @@ void removePiece(char board[6][7], int loc){
 			return;
 		}
 	}
+}
+
+int spacesAvailable(char board[6][7]){
+	int num = 0;
+
+	for (int r = 0; r < 6; r++){
+		for (int c = 0; c < 7; c++){
+			if (board[r][c] == ' ') num++;
+		}
+	}
+	return num;
 }

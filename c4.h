@@ -18,6 +18,10 @@ void playGame(player player1, player player2);
 
 bool isAvailable(char board[6][7] , int loc);
 
+int colsAvailable(char board[6][7]);
+
+int spacesAvailable(char board[6][7]);
+
 bool isTie(char board[6][7]);
 
 char winner(char board[6][7]);
@@ -33,5 +37,6 @@ int char2col(char loc);
 
 char col2char(int loc);
 
+int evaluate(char board[6][7], char token);
 
 #endif
