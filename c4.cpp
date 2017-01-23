@@ -224,7 +224,7 @@ int char2col(char loc){
 
 
 char col2char(int loc){
-	printf("Trying to place piece at %d\n", loc);
+	
 	if (loc < 0) assert(0=="NOT A VALID CHOICE");
 	return 'a'+loc;
 
@@ -274,7 +274,7 @@ int evaulateBoard(char board[6][7], char player, char token){
 	// Find all viable 3-in a rows
 	char quad[4];
 	int score = 0;
-	
+	int weight = 10;	
 	for (int r = 0; r < 6; r++){
 		for (int c = 0; c < 4; c++){
 			quad[0] = board[r][c];
@@ -284,12 +284,12 @@ int evaulateBoard(char board[6][7], char player, char token){
 			if (has3of4(quad, player)) {
 				score++; // better to have 3 in a row
 				// better if it can be forced
-				if (canBeForced(board, r, c, player, player)) score+=5;
+				if (canBeForced(board, r, c, player, player)) score+=weight;
 			}
 			else if (has3of4(quad, opponent(player))){
 				score--; // bad if opponent has three in a row
 				// worse if it can be forced
-				if (canBeForced(board, r, c, player, opponent(player))) score-=5;
+				if (canBeForced(board, r, c, player, opponent(player))) score-=weight;
 			}
 		}
 	}
@@ -304,12 +304,12 @@ int evaulateBoard(char board[6][7], char player, char token){
 			if (has3of4(quad, player)) {
 				score++; // better to have 3 in a row
 				// better if it can be forced
-				if (canBeForced(board, r, c, player, player)) score+=5;
+				if (canBeForced(board, r, c, player, player)) score+=weight;
 			}
 			else if (has3of4(quad, opponent(player))){
 				score--; // bad if opponent has three in a row
 				// worse if it can be forced
-				if (canBeForced(board, r, c, player, opponent(player))) score-=5;
+				if (canBeForced(board, r, c, player, opponent(player))) score-=weight;
 			}
 		}
 	}
@@ -324,12 +324,12 @@ int evaulateBoard(char board[6][7], char player, char token){
 			if (has3of4(quad, player)) {
 				score++; // better to have 3 in a row
 				// better if it can be forced
-				if (canBeForced(board, r, c, player, player)) score+=5;
+				if (canBeForced(board, r, c, player, player)) score+=weight;
 			}
 			else if (has3of4(quad, opponent(player))){
 				score--; // bad if opponent has three in a row
 				// worse if it can be forced
-				if (canBeForced(board, r, c, player, opponent(player))) score-=5;
+				if (canBeForced(board, r, c, player, opponent(player))) score-=weight;
 			}
 			
 		}
@@ -345,12 +345,12 @@ int evaulateBoard(char board[6][7], char player, char token){
 			if (has3of4(quad, player)) {
 				score++; // better to have 3 in a row
 				// better if it can be forced
-				if (canBeForced(board, r, c, player, player)) score+=5;
+				if (canBeForced(board, r, c, player, player)) score+=weight;
 			}
 			else if (has3of4(quad, opponent(player))){
 				score--; // bad if opponent has three in a row
 				// worse if it can be forced
-				if (canBeForced(board, r, c, player, opponent(player))) score-=5;
+				if (canBeForced(board, r, c, player, opponent(player))) score-=weight;
 			}
 		}
 	}
