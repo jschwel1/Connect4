@@ -1,5 +1,6 @@
 #ifndef C4_H
 #define C4_H
+#include <stdio.h>
 #include <iostream>
 #include <assert.h>
 
@@ -22,6 +23,8 @@ int colsAvailable(char board[6][7]);
 
 int spacesAvailable(char board[6][7]);
 
+int spacesAvailableIn(char board[6][7], int col);
+
 bool isTie(char board[6][7]);
 
 char winner(char board[6][7]);
@@ -37,6 +40,10 @@ int char2col(char loc);
 
 char col2char(int loc);
 
-int evaluate(char board[6][7], char token);
+int evaulateBoard(char board[6][7], char player, char token);
+
+int has3of4(char q[4], char player);
+
+int canBeForced(char board[6][7], int row, int col, char turn, char player);
 
 #endif

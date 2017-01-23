@@ -1,5 +1,6 @@
 #include "c4.h"
-
+#include <stdio.h>
+#include <iostream>
 
 /*
 [row][col]
@@ -140,12 +141,7 @@ char winner(char board[6][7]){
 			if (board[r][c] != ' ' && board[r][c] == board[r][c+1] && board[r][c] == board[r][c+2] && board[r][c] == board[r][c+3]){
 //				printf("============Horizontal win @ r=%d\n",r);
 				win = board[r][c];
-				#ifdef SHOW_WIN
-					board[r][c] = '-';
-					board[r][c+1] = '-';
-					board[r][c+2] = '-';
-					board[r][c+3] = '-';
-				#endif
+
 				return win;
 			}
 		}
@@ -157,12 +153,7 @@ char winner(char board[6][7]){
 			if (board[r][c] != ' ' && board[r][c] == board[r+1][c] && board[r][c] == board[r+2][c] && board[r][c] == board[r+3][c]){
 //				printf("============vertical win @ c = %d\n", c);
 				win = board[r][c];
-				#ifdef SHOW_WIN
-					board[r][c] = '|';
-					board[r+1][c] = '|';
-					board[r+2][c] = '|';
-					board[r+3][c] = '|';
-				#endif
+
 				return win;
 			}
 		}
@@ -174,12 +165,6 @@ char winner(char board[6][7]){
 			if (board[r][c] != ' ' && board[r][c] == board[r+1][c-1] && board[r][c] == board[r+2][c-2] && board[r][c] == board[r+3][c-3]){
 //				printf("============Diagonal win \\\n");
 				win = board[r][c];
-				#ifdef SHOW_WIN
-					board[r][c] = '\\';
-					board[r+1][c-1] = '\\';
-					board[r+2][c-2] = '\\';
-					board[r+3][c-3] = '\\';
-				#endif
 				return win;
 			}
 		}
@@ -191,12 +176,7 @@ char winner(char board[6][7]){
 			if (board[r][c] != ' ' && board[r][c] == board[r+1][c+1] && board[r][c] == board[r+2][c+2] && board[r][c] == board[r+3][c+3]){
 //				printf("============Diagonal win /\n");
 				win = board[r][c];
-				#ifdef SHOW_WIN
-					board[r][c] = '/';
-					board[r+1][c+1] = '/';
-					board[r+2][c+2] = '/';
-					board[r+3][c+3] = '/';
-				#endif
+
 				return win;
 			}
 		}
@@ -278,4 +258,135 @@ int spacesAvailable(char board[6][7]){
 		}
 	}
 	return num;
+}
+
+int spacesAvailableIn(char board[6][7], int col){
+		int num = 0;
+		for (int r = 0; r < 6; r++){
+			if (board[r][col] == ' ') num++;
+		}
+		
+		return num;
+}
+
+
+int evaulateBoard(char board[6][7], char player, char token){
+	// Find all viable 3-in a rows
+	char quad[4];
+	int score = 0;
+	
+	for (int r = 0; r < 6; r++){
+		for (int c = 0; c < 4; c++){
+			quad[0] = board[r][c];
+			quad[1] = board[r][c+1];
+			quad[2] = board[r][c+2];
+			quad[3] = board[r][c+3];
+			if (has3of4(quad, player)) {
+				score++; // better to have 3 in a row
+				// better if it can be forced
+				if (canBeForced(board, r, c, player, player)) score+=5;
+			}
+			else if (has3of4(quad, opponent(player))){
+				score--; // bad if opponent has three in a row
+				// worse if it can be forced
+				if (canBeForced(board, r, c, player, opponent(player))) score-=5;
+			}
+		}
+	}
+	
+	// check vertical
+	for (int c = 0; c < 7; c++){
+		for (int r = 0; r < 3; r++){
+			quad[0] = board[r][c];
+			quad[1] = board[r+1][c];
+			quad[2] = board[r+2][c];
+			quad[3] = board[r+3][c];
+			if (has3of4(quad, player)) {
+				score++; // better to have 3 in a row
+				// better if it can be forced
+				if (canBeForced(board, r, c, player, player)) score+=5;
+			}
+			else if (has3of4(quad, opponent(player))){
+				score--; // bad if opponent has three in a row
+				// worse if it can be forced
+				if (canBeForced(board, r, c, player, opponent(player))) score-=5;
+			}
+		}
+	}
+	
+	// check diagonal (\)
+	for (int r = 0; r < 3; r++){
+		for (int c = 3; c < 7; c++){
+			quad[0] = board[r][c];
+			quad[1] = board[r+1][c-1];
+			quad[2] = board[r+2][c-2];
+			quad[3] = board[r+3][c-3];
+			if (has3of4(quad, player)) {
+				score++; // better to have 3 in a row
+				// better if it can be forced
+				if (canBeForced(board, r, c, player, player)) score+=5;
+			}
+			else if (has3of4(quad, opponent(player))){
+				score--; // bad if opponent has three in a row
+				// worse if it can be forced
+				if (canBeForced(board, r, c, player, opponent(player))) score-=5;
+			}
+			
+		}
+	}
+	
+	// check diagonal (/)
+	for (int r = 0; r < 3; r++){
+		for (int c = 0; c < 4; c++){
+			quad[0] = board[r][c];
+			quad[1] = board[r+1][c+1];
+			quad[2] = board[r+2][c+2];
+			quad[3] = board[r+3][c+3];
+			if (has3of4(quad, player)) {
+				score++; // better to have 3 in a row
+				// better if it can be forced
+				if (canBeForced(board, r, c, player, player)) score+=5;
+			}
+			else if (has3of4(quad, opponent(player))){
+				score--; // bad if opponent has three in a row
+				// worse if it can be forced
+				if (canBeForced(board, r, c, player, opponent(player))) score-=5;
+			}
+		}
+	}
+	return score;
+}
+int has3of4(char q[4], char player){
+		int counter = 0; 
+		for (int i = 0; i < 4; i++){
+			if (q[i] == player) counter++;
+			else if (q[i] == ' ') {}
+			else counter--;
+		}
+		
+		if (counter == 3) return 1;
+		return 0;
+		
+}
+
+
+// If it's "turn"s turn, can player be forced to put a piece there
+int canBeForced(char board[6][7], int row, int col, char turn, char player){
+	int numFreeNotInCol = 0;
+	int numFree;
+	
+	for (int i = 0; i < 7; i++){
+		if (i != col) numFreeNotInCol = spacesAvailableIn(board, col);
+	}
+	numFree = numFreeNotInCol + (row+1);
+	
+	if (player == turn){
+		if (numFree%2 == 1) return 1;
+		else return 0;
+	}
+	else {
+		if (numFree%2 == 1) return 0;
+		else return 1;
+	}
+	
 }

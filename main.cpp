@@ -127,11 +127,11 @@ int alphaBeta(char board[6][7], char player, char token, int ab, int depth){
 	// Base cases: check the values of the board. If terminal, return it's value
 	if (win == player) {
 //		printf("Depth: %d\n",depth);
-		return 50-depth;
+		return 50;
 	}
 	else if (win == opponent(player)) {
 //		printf("Depth: %d\n",depth);
-		return depth-50;
+		return -50;
 	}
 	else if (isTie(board)) {
 //		printf("Depth: %d\n",depth);
@@ -139,22 +139,11 @@ int alphaBeta(char board[6][7], char player, char token, int ab, int depth){
 	}
 	
 	// FIX THE DEPTH and count it as a tie for now...
-	if (depth + colsAvailable(board) > 17 && token == player) {
+	if (depth + colsAvailable(board) > 11 && token == player) {
 		int temp = 0;
-//		printf("Max depth reached, this board is currently worth %d\n", temp);
-//		drawBoard(board);
 
-		//	for (int c = 0; c < 7; c++){
-//				addPiece(board, c, opponent(token));
-//				if (winner(board) == opponent(token)){
-//					removePiece(board, c);
-//					return 50-depth;
-//			}
-//			removePiece(board, c);
-//			return 0;
-//		
-//	}
-
+		temp = evaulateBoard(board, player, token);
+	//	printf("Max depth reached, this board is currently worth %d\n", temp);
 		return temp;
 	}
 
